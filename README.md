@@ -1,11 +1,22 @@
 # Athena
 
 Athena is a utility which generates the current Fortnite Item Shop into a stylized image and shares it on Twitter.
+There are two style: old and new.
 
-As seen on [@FNMasterCom](https://twitter.com/FNMasterCom/status/1197666123078160386?s=20)...
+## Creator
+
+This utility is made by [EthanC](www.github.com/EthanC). I translated it and updated when necessary.
+
+## Example
+
+You can choose between two Icon Styles, the first is the old Icon Style, and the second is a remake of the old icons.
 
 <p align="center">
-    <img src="https://github.com/MyNameIsDark01/Athena/blob/master/itemshop.png" width="650px" draggable="false">
+    <img src="https://github.com/MyNameIsDark01/Athena/blob/master/old.png" width="650px" draggable="false">
+</p>
+
+<p align="center">
+    <img src="https://github.com/MyNameIsDark01/Athena/blob/master/new.png" width="650px" draggable="false">
 </p>
 
 ## Requirements
@@ -14,7 +25,7 @@ IF you want install all requirements in one click write this on shell:
 
     `pip install -r requirements.txt` **(WINDOWS)**
     `pip3 install -r requirements.txt` **(LINUX/UBUNTU)**
-    
+
 - [Python 3.7](https://www.python.org/downloads/)
 - [Requests](http://docs.python-requests.org/en/master/user/install/)
 - [coloredlogs](https://pypi.org/project/coloredlogs/)
@@ -30,6 +41,7 @@ Open `configuration_example.json` in your preferred text editor, fill the config
 - `delayStart`: Set to `0` to begin the process immediately
 - `language`: Set the language for the Item Shop data ([Supported Languages](https://fortnite-api.com/documentation))
 - `date_language`: Set the language for the date above the items ([Supported Languages](https://py-googletrans.readthedocs.io/en/latest/#googletrans-languages))
+- `style`: You can set `old` or `new`
 - `supportACreator`: Leave blank to omit the Support-A-Creator tag section of the Tweet
 - `twitter`: Set `enabled` to `false` if you wish for `itemshop.png` to not be Tweeted
 
