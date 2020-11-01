@@ -347,9 +347,6 @@ class Athena:
         card.paste(layer, layer)
 
         canvas = ImageDraw.Draw(card)
-
-        rarity = Translator().translate(rarity, str = 'en', dest= self.language).text
-        category = Translator().translate(category, str = 'en', dest= self.language).text
         
         if self.style == 'old':
             font = ImageUtil.Font(self, 30)
