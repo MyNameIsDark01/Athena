@@ -8,9 +8,8 @@ from time import sleep
 import coloredlogs
 import twitter
 from PIL import Image, ImageDraw
-
-import googletrans
 from googletrans import Translator
+
 from util import ImageUtil, Utility
 
 log = logging.getLogger(__name__)
@@ -41,7 +40,7 @@ class Athena:
                 # Strip time from the timestamp, we only need the date + translate in every language from googletrans
                 date = Translator().translate(Utility.ISOtoHuman(
                     self, itemShop["date"].split("T")[0], self.language
-                ), str = 'en', dest= self.date_language).text
+                ), str='en', dest=self.date_language).text
 
                 log.info(f"Retrieved Item Shop for {date}")
 
@@ -66,7 +65,7 @@ class Athena:
             self.language = configuration["language"]
             self.date_language = configuration["date_language"]
             self.style = configuration["style"]
-            if os.path.exists('assets/images/' + self.style) == False:
+            if not os.path.exists('assets/images/' + self.style):
                 log.critical(f"Icon Style not found.")
                 return False
             self.supportACreator = configuration["supportACreator"]
@@ -89,12 +88,12 @@ class Athena:
         Return True if image sucessfully saved.
         """
 
-        if itemShop["featured"] != None:
+        if itemShop["featured"] is not None:
             featured = itemShop["featured"]["entries"]
         else:
             featured = []
 
-        if itemShop["daily"] != None:
+        if itemShop["daily"] is not None:
             daily = itemShop["daily"]["entries"]
         else:
             daily = []
@@ -116,7 +115,7 @@ class Athena:
                 background, ImageUtil.CenterX(self, background.width, shopImage.width)
             )
         except FileNotFoundError:
-            log.warn("Failed to open background.png, defaulting to dark gray")
+            log.warning("Failed to open background.png, defaulting to dark gray")
             shopImage.paste((18, 18, 18), [0, 0, shopImage.size[0], shopImage.size[1]])
 
         logo = ImageUtil.Open(self, "logo.png")
@@ -135,9 +134,9 @@ class Athena:
             (255, 255, 255),
             font=font,
         )
-        f = Translator().translate("Featured", str = 'en', dest= self.language).text
-        d = Translator().translate("Daily", str = 'en', dest= self.language).text
-        
+        f = Translator().translate("Featured", str='en', dest=self.language).text
+        d = Translator().translate("Daily", str='en', dest=self.language).text
+
         canvas.text((20, 255), f, (255, 255, 255), font=font)
         textWidth, _ = font.getsize(d)
         canvas.text(
@@ -200,18 +199,18 @@ class Athena:
             category = item["items"][0]["type"]["value"]
             price = item["finalPrice"]
 
-            if item["items"][0]["images"]["featured"] != None:
+            if item["items"][0]["images"]["featured"] is not None:
                 icon = item["items"][0]["images"]["featured"]
             else:
                 icon = item["items"][0]["images"]["icon"]
 
             # Select bundle image and name
-            if item["bundle"] != None:
+            if item["bundle"] is not None:
                 name = item["bundle"]["name"]
                 icon = item["bundle"]["image"]
 
         except Exception as e:
-            log.error(f"Failed to parse item {name}, {e}")
+            log.error(f"Failed to parse item, {e}")
 
             return
 
@@ -251,7 +250,7 @@ class Athena:
         try:
             layer = ImageUtil.Open(self, self.style + f"/card_top_{rarity}.png")
         except FileNotFoundError:
-            log.warn(f"Failed to open card_top_{rarity}.png, defaulted to Common")
+            log.warning(f"Failed to open card_top_{rarity}.png, defaulted to Common")
             layer = ImageUtil.Open(self, self.style + f"/card_top_common.png")
 
         card.paste(layer)
@@ -285,7 +284,7 @@ class Athena:
                 try:
                     layer = ImageUtil.Open(self, self.style + f"/box_bottom_{extraRarity}.png")
                 except FileNotFoundError:
-                    log.warn(
+                    log.warning(
                         f"Failed to open box_bottom_{extraRarity}.png, defaulted to Common"
                     )
                     layer = ImageUtil.Open(self, self.style + f"/box_bottom_common.png")
@@ -294,7 +293,7 @@ class Athena:
                     layer,
                     (
                         (card.width - (layer.width + 9)),
-                        (9 + ((i // 1) * (layer.height))),
+                        (9 + ((i // 1) * layer.height)),
                     ),
                 )
 
@@ -305,7 +304,7 @@ class Athena:
                     extraIcon,
                     (
                         (card.width - (layer.width + 9)),
-                        (9 + ((i // 1) * (extraIcon.height))),
+                        (9 + ((i // 1) * extraIcon.height)),
                     ),
                     extraIcon,
                 )
@@ -313,7 +312,7 @@ class Athena:
                 try:
                     layer = ImageUtil.Open(self, self.style + f"/box_faceplate_{extraRarity}.png")
                 except FileNotFoundError:
-                    log.warn(
+                    log.warning(
                         f"Failed to open box_faceplate_{extraRarity}.png, defaulted to Common"
                     )
                     layer = ImageUtil.Open(self, self.style + f"/box_faceplate_common.png")
@@ -322,7 +321,7 @@ class Athena:
                     layer,
                     (
                         (card.width - (layer.width + 9)),
-                        (9 + ((i // 1) * (layer.height))),
+                        (9 + ((i // 1) * layer.height)),
                     ),
                     layer,
                 )
@@ -333,21 +332,21 @@ class Athena:
             try:
                 layer = ImageUtil.Open(self, self.style + f"/card_faceplate_{rarity}.png")
             except FileNotFoundError:
-                log.warn(f"Failed to open card_faceplate_{rarity}.png, defaulted to Common")
+                log.warning(f"Failed to open card_faceplate_{rarity}.png, defaulted to Common")
                 layer = ImageUtil.Open(self, self.style + f"/card_faceplate_common.png")
 
             card.paste(layer, layer)
-        
+
         try:
             layer = ImageUtil.Open(self, self.style + f"/card_bottom_{rarity}.png")
         except FileNotFoundError:
-            log.warn(f"Failed to open card_bottom_{rarity}.png, defaulted to Common")
+            log.warning(f"Failed to open card_bottom_{rarity}.png, defaulted to Common")
             layer = ImageUtil.Open(self, self.style + f"/card_bottom_common.png")
 
         card.paste(layer, layer)
 
         canvas = ImageDraw.Draw(card)
-        
+
         if self.style == 'old':
             font = ImageUtil.Font(self, 30)
             textWidth, _ = font.getsize(f"{rarity.capitalize()} {category.capitalize()}")
