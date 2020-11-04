@@ -1,5 +1,3 @@
-import json
-import locale
 import logging
 from datetime import datetime
 
@@ -12,26 +10,25 @@ log = logging.getLogger(__name__)
 class Utility:
     """Class containing utilitarian functions intended to reduce duplicate code."""
 
-    def GET(self, url: str, parameters: dict = {"language": "en"}):
+    @staticmethod
+    def get_url(url: str, parameters=None):
         """
         Return the response of a successful HTTP GET request to the specified
         URL with the optionally provided header values.
         """
 
+        if parameters is None:
+            parameters = {"language": "en"}
         res = requests.get(url, params=parameters)
 
         # HTTP 200 (OK)
         if res.status_code == 200:
-            return res.text
+            return res.json()
         else:
             log.critical(f"Failed to GET {url} (HTTP {res.status_code})")
 
-    def nowISO(self):
-        """Return the current utc time in ISO8601 timestamp format."""
-
-        return datetime.utcnow().isoformat()
-
-    def ISOtoHuman(self, date: str, language: str):
+    @staticmethod
+    def iso_to_human(date: str):
         """Return the provided ISO8601 timestamp in human-readable format."""
 
         try:
@@ -42,35 +39,21 @@ class Utility:
                 # Windows-supported zero padding removal
                 return datetime.strptime(date, "%Y-%m-%d").strftime("%A, %B %#d, %Y")
             except Exception as e:
-                log.error(self, f"Failed to convert to human-readable time, {e}")
-
-    def ReadFile(self, filename: str, extension: str, directory: str = ""):
-        """
-        Read and return the contents of the specified file.
-
-        Optionally specify a relative directory.
-        """
-
-        try:
-            with open(
-                f"{directory}{filename}.{extension}", "r", encoding="utf-8"
-            ) as file:
-                return file.read()
-        except Exception as e:
-            log.critical(f"Failed to read {filename}.{extension}, {e}")
+                log.error(
+                    f"Failed to convert to human-readable time, {e}")
 
 
 class ImageUtil:
     """Class containing utilitarian image-based functions intended to reduce duplicate code."""
 
-    def Open(self, filename: str, directory: str = "assets/images/"):
+    @staticmethod
+    def open_image(filename: str):
         """Return the specified image file."""
+        return Image.open(f"assets/images/{filename}")
 
-        return Image.open(f"{directory}{filename}")
-
-    def Download(self, url: str):
+    @staticmethod
+    def download_image(url: str):
         """Download and return the raw file from the specified url as an image object."""
-
         res = requests.get(url, stream=True)
 
         # HTTP 200 (OK)
@@ -79,56 +62,46 @@ class ImageUtil:
         else:
             log.critical(f"Failed to GET {url} (HTTP {res.status_code})")
 
-    def RatioResize(self, image: Image.Image, maxWidth: int, maxHeight: int):
+    @staticmethod
+    def resize_ratio(image: Image.Image, max_width: int, max_height: int):
         """Resize and return the provided image while maintaining aspect ratio."""
-
-        ratio = max(maxWidth / image.width, maxHeight / image.height)
-
+        ratio = max(max_width / image.width, max_height / image.height)
         return image.resize(
-            (int(image.width * ratio), int(image.height * ratio)), Image.ANTIALIAS
+            (int(image.width * ratio), int(image.height * ratio)),
+            Image.ANTIALIAS
         )
 
-    def CenterX(self, foregroundWidth: int, backgroundWidth: int, distanceTop: int = 0):
+    @staticmethod
+    def align_center(background_width: int, foreground_width: int, distance_top: int = 0):
         """Return the tuple necessary for horizontal centering and an optional vertical distance."""
+        return background_width // 2 - foreground_width // 2, distance_top
 
-        return (int(backgroundWidth / 2) - int(foregroundWidth / 2), distanceTop)
+    @staticmethod
+    def get_font(size: int):
+        """
+        :size -> font size of text
+        :return -> A font object with the specified font file and size.
+        """
+        return ImageFont.truetype(f"assets/fonts/BurbankBigCondensed-Black.otf", size)
 
-    def Font(
-        self,
-        size: int,
-        font: str = "BurbankBigCondensed-Black.otf",
-        directory: str = "assets/fonts/",
-    ):
-        """Return a font object with the specified font file and size."""
+    def fit_text(self, text: str, size: int, max_size: int):
+        """
+        Return the font and width which fits the provided text within the
+        specified maxiumum width.
 
-        try:
-            return ImageFont.truetype(f"{directory}{font}", size)
-        except OSError:
-            log.warn(
-                "BurbankBigCondensed-Black.otf not found, defaulted font to LuckiestGuy-Regular.ttf"
-            )
-
-            return ImageFont.truetype(f"{directory}LuckiestGuy-Regular.ttf", size)
-        except Exception as e:
-            log.error(f"Failed to load font, {e}")
-
-    def FitTextX(
-        self,
-        text: str,
-        size: int,
-        maxSize: int,
-        font: str = "BurbankBigCondensed-Black.otf",
-    ):
-        """Return the font and width which fits the provided text within the specified maxiumum width."""
-
-        font = ImageUtil.Font(self, size)
-        textWidth, _ = font.getsize(text)
+        :text -> string text that we want to fit it
+        :size -> main font size of text
+        :max_size -> max width size per pixel
+        :return -> font object + new text width + change int to align the text
+        """
+        font = self.get_font(size)
+        text_width, _ = font.getsize(text)
         change = 0
 
-        while textWidth >= maxSize:
+        while text_width >= max_size:
             change += 1
             size -= 1
-            font = ImageUtil.Font(self, size)
-            textWidth, _ = font.getsize(text)
+            font = self.get_font(size)
+            text_width, _ = font.getsize(text)
 
-        return ImageUtil.Font(self, size), textWidth, change
+        return font, text_width, change

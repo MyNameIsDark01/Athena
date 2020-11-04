@@ -1,5 +1,5 @@
-requests
-coloredlogs
-pillow
+requests~=2.24.0
+coloredlogs~=14.0
+pillow~=8.0.1
 python-twitter
-googletrans
+googletrans~=3.0.0
