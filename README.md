@@ -36,14 +36,14 @@ A [Fortnite-API API Key](https://fortnite-api.com/profile) isn't required to obt
 
 ## Usage
 
-Open `configuration_example.json` in your preferred text editor, fill the configurable values. Once finished, save and rename the file to `configuration.json`.
+Open `configuration.py` in your preferred text editor, fill the configurable values. Once finished, save the file.
 
-- `delayStart`: Set to `0` to begin the process immediately
-- `language`: Set the language for the Item Shop data ([Supported Languages](https://fortnite-api.com/documentation))
-- `date_language`: Set the language for the date above the items ([Supported Languages](https://py-googletrans.readthedocs.io/en/latest/#googletrans-languages))
-- `style`: You can set `old` or `new`
-- `supportACreator`: Leave blank to omit the Support-A-Creator tag section of the Tweet
-- `twitter`: Set `enabled` to `false` if you wish for `itemshop.png` to not be Tweeted
+- `DELAY_START`: Set to `0` to begin the process immediately
+- `LANGUAGE`: Set the language for the Item Shop data ([Supported Languages](https://fortnite-api.com/documentation))
+- `DATE_LANGUAGE`: Set the language for the date above the items ([Supported Languages](https://py-googletrans.readthedocs.io/en/latest/#googletrans-languages))
+- `STYLE`: You can set `old` or `new`
+- `CREATOR_CODE`: Leave blank to omit the Support-A-Creator tag section of the Tweet
+- `TwitterConfig.ENABLED`: Set `enabled` to `false` if you wish for `itemshop.png` to not be Tweeted
 
 Edit the images found in `assets/images/` to your liking, avoid changing image dimensions for optimal results.
 

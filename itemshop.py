@@ -269,7 +269,7 @@ class Athena:
                 card.width, icon.width), icon)
         else:
             card.paste(icon, ImageUtil().align_center(
-                icon.width, card.width, 15), icon)
+                card.width, icon.width, 15), icon)
 
         if len(item["items"]) > 1:
             # Track grid position
@@ -379,7 +379,7 @@ class Athena:
             text_width, _ = font.getsize(price)
             canvas.text(
                 ImageUtil().align_center(
-                    card.width, ((text_width + 15) - vbucks.width), 495),
+                    card.width, (text_width - vbucks.width), 495),
                 price,
                 blend_color,
                 font=font,
